@@ -35,3 +35,34 @@ int main()
     printf("Enter the String of a and b only : \n");
     yylex();
 }
+
+or
+
+%{
+int a_count = 0;
+int b_count = 0;
+%}
+
+%%
+a { a_count++; }
+b { b_count++; }
+\n { 
+    if (a_count % 2 == 0 && b_count % 2 == 0) {
+        printf("Accepted\n");
+    } else {
+        printf("Rejected\n");
+    }
+    a_count = 0;
+    b_count = 0;
+}
+. { /* Ignore all other characters */ }
+%%
+
+int yywrap() {
+    return 1;
+}
+
+int main() {
+    yylex();
+    return 0;
+}
