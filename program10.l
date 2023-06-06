@@ -1,37 +1,58 @@
 %{
-#include<stdio.h>
 %}
-
-%s A B C F
+%s A B C D E F G DEAD
 %%
-<INITIAL>\n printf("\nAccepted\n\n");BEGIN INITIAL;
+<INITIAL>b BEGIN INITIAL;
 <INITIAL>a BEGIN A;
-<INITIAL>b BEGIN B;
-<A>a BEGIN INITIAL;
-<A>b BEGIN C;
-<A>\n BEGIN INITIAL; printf("\nNot Accepted\n");
-<B>a BEGIN C;
-<B>b BEGIN INITIAL;
-<B>\n BEGIN INITIAL; printf("\nNot Accepted\n");
-<C>a BEGIN B;
-<C>b BEGIN A;
-<C>\n BEGIN INITIAL; printf("\nNot Accepted\n");
-<A>[^ab\n] BEGIN F;
-<B>[^ab\n] BEGIN F;
-<C>[^ab\n] BEGIN F;
-<INITIAL>[^ab\n] BEGIN F;
-<F>[^\n] BEGIN F;
-<F>[\n] BEGIN INITIAL;printf("\nInvalid Input\n");
-.;
-%%
+<INITIAL>[^ab\n] BEGIN DEAD;
+<INITIAL>\n BEGIN INITIAL; {printf("Not Accepted\n");}
 
+<A>b BEGIN F;
+<A>a BEGIN B;
+<A>[^ab\n] BEGIN DEAD;
+<A>\n BEGIN INITIAL; {printf("Not Accepted\n");}
+
+<B>b BEGIN D;
+<B>a BEGIN C;
+<B>[^ab\n] BEGIN DEAD;
+<B>\n BEGIN INITIAL; {printf("Not Accepted\n");}
+
+<C>b BEGIN D;
+<C>a BEGIN C;
+<C>[^ab\n] BEGIN DEAD;
+<C>\n BEGIN INITIAL; {printf("Accepted\n");} 
+
+<D>b BEGIN G;
+<D>a BEGIN E;
+<D>[^ab\n] BEGIN DEAD;
+<D>\n BEGIN INITIAL; {printf("Accepted\n");}
+
+<E>b BEGIN F;
+<E>a BEGIN B;
+<E>[^ab\n] BEGIN DEAD;
+<E>\n BEGIN INITIAL; {printf("Accepted\n");}
+
+<F>b BEGIN G;
+<F>a BEGIN E;
+<F>[^ab\n] BEGIN DEAD;
+<F>\n BEGIN INITIAL; {printf("Not Accepted\n");}
+
+<G>b BEGIN INITIAL;
+<G>a BEGIN A;
+<G>[^ab\n] BEGIN DEAD;
+<G>\n BEGIN INITIAL; {printf("Accepted\n");}
+
+<DEAD>[^\n] BEGIN DEAD;
+<DEAD>\n BEGIN INITIAL; {printf("Invalid\n");}
+ 
+%%
 int yywrap()
 {
-    return 1;
+ return 1;
 }
-
 int main()
 {
-    printf("Enter the String of a and b only : \n");
-    yylex();
+ printf("Enter String\n");
+ yylex();
+ return 0;
 }
